@@ -7,7 +7,7 @@ use trie::TrieStruct;
 
 fn main() {
     // Create a trie to store the dictionary
-    let mut trie = trie::TrieStruct::create();
+    let mut trie: TrieStruct = trie::TrieStruct::create();
 
     // Insert words into the trie dictionary
     trie.insert("bloat".to_string());
@@ -16,10 +16,10 @@ fn main() {
     trie.insert("laminate".to_string());
 
     // Generate a fixed board
-    let fixed_board = board::generate_fixed_board();
+    let fixed_board: Vec<Vec<char>> = board::generate_fixed_board();
 
     // Find the words on the board
-    let words = find_words(fixed_board, &mut trie);
+    let words: Vec<String> = find_words(fixed_board, &mut trie);
 
     // print the words
     println!("{:?}", words);
