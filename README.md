@@ -20,6 +20,7 @@ Rules:
 ace
 car
 care
+race
 ```
 
 ### Grid
