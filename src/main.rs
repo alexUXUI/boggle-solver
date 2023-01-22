@@ -8,9 +8,10 @@ fn main() {
 
     // C  A
     // N  E
-    trie.insert("can".to_string());
-    trie.insert("cane".to_string());
-    trie.insert("ace".to_string());
+    trie.insert("bloat".to_string());
+    trie.insert("inmate".to_string());
+    trie.insert("anime".to_string());
+    trie.insert("laminate".to_string());
 
     trie.is_word(&mut "ace".to_string());
     trie.is_word(&mut "can".to_string());
@@ -42,7 +43,11 @@ fn main() {
     // println!("{:?}", threexthree);
 
     // given a board and the trie, find all the words
-    let words = find_words(small_board, &mut trie);
+    // let words = find_words(small_board, &mut trie);
+
+    let fixed_board = board::generate_fixed_board();
+
+    let words = find_words(fixed_board, &mut trie);
 
     // print the words
     println!("{:?}", words);
