@@ -23,7 +23,7 @@ fn test_generate_board_from_string() {
     let board_string: &str = "cane";
     let board_size: usize = 2;
     let board = generate_board_from_string(board_string.to_string(), board_size);
-    let expected_board: Vec<Vec<char>> = vec![vec!['c', 'a'], vec!['n', 'e']];
+    let expected_board: Vec<Vec<char>> = vec![vec!['c', 'a'], vec!['r', 'e']];
 
     assert_eq!(board, expected_board);
 }

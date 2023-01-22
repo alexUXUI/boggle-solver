@@ -18,8 +18,6 @@ fn main() {
     // Generate a fixed board
     let fixed_board = board::generate_fixed_board();
 
-    let board_from_string = board::generate_board_from_string("cane".to_string(), 2);
-
     // Find the words on the board
     let words = find_words(fixed_board, &mut trie);
 
