@@ -6,6 +6,8 @@ pub fn find_words(board: Vec<Vec<char>>, trie: &mut TrieStruct) -> Vec<String> {
     // create an empty prefix char vector to hold the current prefix
     let mut empty_startng_prefix: Vec<char> = Vec::new();
 
+    let mut visited_cells: Vec<(usize, usize)> = Vec::new();
+
     // iterate through each cell on the board
     for row in 0..board.len() {
         for col in 0..board[row].len() {
@@ -17,6 +19,7 @@ pub fn find_words(board: Vec<Vec<char>>, trie: &mut TrieStruct) -> Vec<String> {
                 &mut empty_startng_prefix,
                 trie,
                 &mut found_words,
+                &mut visited_cells,
             );
         }
     }
@@ -31,7 +34,11 @@ fn find_words_from_cell(
     current_prefix: &mut Vec<char>,
     trie: &mut TrieStruct,
     words: &mut Vec<String>,
+    visited_cells: &mut Vec<(usize, usize)>
 ) {
+    // print visited cells
+    println!("visited cells: {:?}", visited_cells);
+
     // get the current letter
     let current_letter: char = board[row][col];
 
@@ -47,16 +54,35 @@ fn find_words_from_cell(
         return;
     }
 
-    // if the prefix string is a word add it to the words vector
-    if trie.is_word(&mut prefix_string) {
-        words.push(prefix_string.to_string());
+    // if the prefix string is a word
+    let is_prefix_a_word = trie.is_word(&mut prefix_string);
+
+    // and the word does not already exist in the words vector
+    let word_does_not_exist = !words.contains(&prefix_string);
+
+    // add the word to the words vector
+    if word_does_not_exist && is_prefix_a_word {
+        words.push(prefix_string);
     }
 
     // get cell neighbors
-    let neighbors = get_valid_neighbors(board.clone(), row, col);
+    let neighbors = get_valid_neighbors(board.clone(), row, col, visited_cells);
 
     // iterate through the neighbors
     for neighbor in neighbors {
+
+        // short circuit if the neighbor has already been visited
+        // the vector contains a tuple so make sure to check both the tuple values for a match
+        // visited_cells.contains(&neighbor) does not work
+        if visited_cells.contains(&(neighbor.0, neighbor.1)) {
+            continue;
+        }
+
+        // mark self as visited
+        visited_cells.push((row, col));
+        // mark neighbor as visited
+        visited_cells.push(neighbor);
+
         find_words_from_cell(
             board.clone(),
             neighbor.0,
@@ -64,50 +90,42 @@ fn find_words_from_cell(
             &mut new_prefix,
             trie,
             words,
+            visited_cells,
         );
+
+        // unmark self as visited
+        visited_cells.pop();
+        // unmark neighbor as visited
+        visited_cells.pop();
     }
 }
 
-fn get_valid_neighbors(board: Vec<Vec<char>>, row: usize, col: usize) -> Vec<(usize, usize)> {
+fn get_valid_neighbors(board: Vec<Vec<char>>, row: usize, col: usize, visited_cells: &mut Vec<(usize, usize)>) -> Vec<(usize, usize)> {
     let mut neighbors: Vec<(usize, usize)> = Vec::new();
 
-    // handle up
-    if row > 0 {
-        neighbors.push((row - 1, col));
-    }
-
-    // handle down
-    if row < board.len() - 1 {
-        neighbors.push((row + 1, col));
-    }
-
-    // handle left
-    if col > 0 {
-        neighbors.push((row, col - 1));
-    }
-
-    // handle right
-    if col < board[row].len() - 1 {
-        neighbors.push((row, col + 1));
-    }
-
-    // handle up left
-    if row > 0 && col > 0 {
+    // return all valid neighbors, dont add cells that have already been visited and handle diagonal neighbors
+    if row > 0 && col > 0 && !visited_cells.contains(&(row - 1, col - 1)) {
         neighbors.push((row - 1, col - 1));
     }
-
-    // handle up right
-    if row > 0 && col < board[row].len() - 1 {
+    if row > 0 && !visited_cells.contains(&(row - 1, col)) {
+        neighbors.push((row - 1, col));
+    }
+    if row > 0 && col < board[row].len() - 1 && !visited_cells.contains(&(row - 1, col + 1)) {
         neighbors.push((row - 1, col + 1));
     }
-
-    // handle down left
-    if row < board.len() - 1 && col > 0 {
+    if col > 0 && !visited_cells.contains(&(row, col - 1)) {
+        neighbors.push((row, col - 1));
+    }
+    if col < board[row].len() - 1 && !visited_cells.contains(&(row, col + 1)) {
+        neighbors.push((row, col + 1));
+    }
+    if row < board.len() - 1 && col > 0 && !visited_cells.contains(&(row + 1, col - 1)) {
         neighbors.push((row + 1, col - 1));
     }
-
-    // handle down right
-    if row < board.len() - 1 && col < board[row].len() - 1 {
+    if row < board.len() - 1 && !visited_cells.contains(&(row + 1, col)) {
+        neighbors.push((row + 1, col));
+    }
+    if row < board.len() - 1 && col < board[row].len() - 1 && !visited_cells.contains(&(row + 1, col + 1)) {
         neighbors.push((row + 1, col + 1));
     }
 
