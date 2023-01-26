@@ -36,8 +36,6 @@ fn find_words_from_cell(
     words: &mut Vec<String>,
     visited_cells: &mut Vec<(usize, usize)>
 ) {
-    // print visited cells
-    println!("visited cells: {:?}", visited_cells);
 
     // get the current letter
     let current_letter: char = board[row][col];
