@@ -5,6 +5,7 @@ mod trie;
 use solver::find_words;
 use trie::TrieStruct;
 
+use wasm_bindgen::prelude::*;
 fn main() {
     // Create a trie to store the dictionary
     let mut trie: TrieStruct = trie::TrieStruct::create();
